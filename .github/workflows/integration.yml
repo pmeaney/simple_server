@@ -1,30 +1,60 @@
-# https://blog.devgenius.io/learn-ci-cd-with-github-actions-to-deploy-a-nestjs-app-to-heroku-8feb715d3ce7
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+# https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 name: Node.js CI
+
 on:
   push:
-    branches: [ main, feature-test ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, feature-test ]
+    branches: [ main ]
+
 jobs:
-  do-the-thing--build-it:
+  build:
+
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        node-version: 16.x
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [16.x]
+
     steps:
-        - uses: actions/checkout@v2
-        - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-        - run: npm ci
-        - run: npm run build --if-present
-        - run: npm test
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+
+
+# # https://blog.devgenius.io/learn-ci-cd-with-github-actions-to-deploy-a-nestjs-app-to-heroku-8feb715d3ce7
+# # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+# name: Node.js CI
+# on:
+#   push:
+#     branches: [ main, feature-test ]
+#   pull_request:
+#     branches: [ main, feature-test ]
+# jobs:
+#   do-the-thing--build-it:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         node-version: 16.x
+#         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+#     steps:
+#         - uses: actions/checkout@v2
+#         - name: Use Node.js ${{ matrix.node-version }}
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#           cache: 'npm'
+#         - run: npm ci
+#         - run: npm run build --if-present
+#         - run: npm test
         
+      
 # https://codememoirs.com/automatic-deployment-digitalocean-github-actions
 # name: Continuous Integration
 
