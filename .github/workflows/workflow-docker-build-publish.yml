@@ -53,7 +53,7 @@ jobs:
           SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
           SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
       - name: Test echo from the server
-        run: ssh patDevOps@143.110.232.158 'echo hostname'
+        run: ssh dev 'cat /etc/os-release'
 
 
   # deploy:
