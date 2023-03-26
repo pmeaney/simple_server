@@ -33,6 +33,7 @@ jobs:
         run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA)
   
   login_and_pull:
+    needs: build_and_publish
     runs-on: ubuntu-latest
     steps:
       - name: Configure SSH so it can be used to login on each subsequent command
