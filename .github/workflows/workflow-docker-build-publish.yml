@@ -36,22 +36,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configure SSH so it can be used to login on each subsequent command
-            run: |
-              mkdir -p ~/.ssh/
-              echo "$SSH_KEY" > ~/.ssh/dev.key
-              chmod 600 ~/.ssh/dev.key
-              cat >>~/.ssh/config <<END
-              Host dev
-                HostName $SSH_HOST
-                User $SSH_USER
-                IdentityFile ~/.ssh/dev.key
-                StrictHostKeyChecking no
-              END
-            env:
-              SSH_USER: ${{ secrets.DEV_SSH_USER }}
-              SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
-              SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
-      - name: Stop the server
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/dev.key
+          chmod 600 ~/.ssh/dev.key
+          cat >>~/.ssh/config <<END
+          Host dev
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/dev.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.DEV_SSH_USER }}
+          SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+          SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
+      - name: Test echo from the server
         run: ssh staging 'echo hostname'
 
 
