@@ -1,28 +1,74 @@
-# https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-name: Node.js CI
+# https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions
+
+# https://github.com/docker/login-action
+
+
+name: Create and publish a Docker image
 
 on:
   push:
-    branches: [ main, feature-test ]
-  pull_request:
-    branches: [ main, feature-test ]
+    branches: ['release']
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  build-and-push-image:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+    permissions:
+      contents: read
+      packages: write
 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Build container image
+        run: docker build -t ghcr.io/pmeaney/basic-dockerized-nodejs .
+
+
+
+
+# # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# name: Node.js CI
+
+# on:
+#   push:
+#     branches: [ main, feature-test ]
+#   pull_request:
+#     branches: [ main, feature-test ]
+
+# jobs:
+#   build:
+#     # runs-on: ubuntu-latest
+#     runs-on: self-hosted
+#     strategy:
+#       matrix:
+#         node-version: [16.x]
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Use Node.js ${{ matrix.node-version }}
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#       - run: npm ci
+#       - run: npm run build --if-present
+#       - run: npm test
+#       - name: Install doctl
+#         uses: digitalocean/action-doctl@v2
+#         with:
+#           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
 # # https://blog.devgenius.io/learn-ci-cd-with-github-actions-to-deploy-a-nestjs-app-to-heroku-8feb715d3ce7
 # # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
